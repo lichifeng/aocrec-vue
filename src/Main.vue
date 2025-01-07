@@ -13,7 +13,7 @@ provide('queryGuid', ref(''));
 provide('status', ref('-'));
 
 provide('remote', {
-    url: 'http://192.168.200.11:9202/records_demo/_search',
+    url: 'https://api2.aocrec.com/records_demo/_search',
     config: {
         method: 'POST',
         mode: 'cors',
