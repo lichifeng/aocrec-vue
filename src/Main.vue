@@ -19,7 +19,8 @@ provide('remote', {
         mode: 'cors',
         headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json'
+            'Accept': 'application/json',
+            'Authorization': 'Basic ' + btoa('aocrec:aocrec')
         },
         credentials: 'include'
     }
