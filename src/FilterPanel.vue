@@ -1,10 +1,19 @@
 <script setup>
-import { onMounted, inject, ref } from 'vue';
+import { onMounted, inject, ref, watchEffect } from 'vue';
 import { checkResponse } from './funcs';
 
 const server = inject('remote');
 const selectedFilters = inject('selectedFilters');
 const filters = ref({});
+const activeTab = inject('activeTab');
+
+watchEffect(() => {
+    if (activeTab.value != 'list') {
+        document.querySelectorAll('.filter-panel input[type="checkbox"]').forEach(e => { e.disabled = true; })
+    } else {
+        document.querySelectorAll('.filter-panel input[type="checkbox"]').forEach(e => { e.disabled = false; })
+    }
+});
 
 onMounted(async () => {
     const response = await fetch(server.url, {
@@ -81,7 +90,8 @@ onMounted(async () => {
                             <label :for="'matchup-' + opt">{{ opt }}</label>
                         </div>
                         <div class="filter-option-item">
-                            <input type="checkbox" id="matchup-others" v-model="selectedFilters.matchup.value" value="others">
+                            <input type="checkbox" id="matchup-others" v-model="selectedFilters.matchup.value"
+                                value="others">
                             <label for="matchup-others">其它</label>
                         </div>
                     </div>
@@ -90,7 +100,8 @@ onMounted(async () => {
                     <h4>速度：</h4>
                     <div class="filter-option-items">
                         <div v-for="opt in filters.speed" class="filter-option-item">
-                            <input type="checkbox" :id="'speed-' + opt" v-model="selectedFilters.speed.value" :value="opt">
+                            <input type="checkbox" :id="'speed-' + opt" v-model="selectedFilters.speed.value"
+                                :value="opt">
                             <label :for="'speed-' + opt">{{ opt }}</label>
                         </div>
                     </div>
@@ -112,8 +123,8 @@ onMounted(async () => {
                     <h4>胜利条件：</h4>
                     <div class="filter-option-items">
                         <div v-for="opt in filters.victorytype" class="filter-option-item">
-                            <input type="checkbox" :id="'victorytype-' + opt" v-model="selectedFilters.victorytype.value"
-                                :value="opt">
+                            <input type="checkbox" :id="'victorytype-' + opt"
+                                v-model="selectedFilters.victorytype.value" :value="opt">
                             <label :for="'victorytype-' + opt">{{ opt }}</label>
                         </div>
                     </div>
@@ -152,7 +163,8 @@ onMounted(async () => {
                     <h4>包含民族：</h4>
                     <div class="filter-option-items">
                         <div v-for="opt in filters.civs" class="filter-option-item">
-                            <input type="checkbox" :id="'civs-' + opt" v-model="selectedFilters.civs.value" :value="opt">
+                            <input type="checkbox" :id="'civs-' + opt" v-model="selectedFilters.civs.value"
+                                :value="opt">
                             <label :for="'civs-' + opt">{{ opt }}</label>
                         </div>
                     </div>
@@ -193,6 +205,5 @@ onMounted(async () => {
     font-size: inherit;
     font-weight: bold;
     min-width: 6em;
-    text-align: just;
 }
 </style>

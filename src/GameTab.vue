@@ -9,6 +9,7 @@ const hint = useTemplateRef('hint');
 const status = inject('status');
 const queryName = inject('queryName');
 const activeTab = inject('activeTab');
+const details = ref(null);
 
 const searchPlayer = (e) => {
     if (e.target.tagName !== 'A') return;
@@ -31,19 +32,34 @@ watch(gameid, async () => {
             query: {
                 term: { guid: gameid.value }
             },
-            collapse: { field: "guid" }
+            sort: [{ duration: 'desc' }]
         })
     });
     const data = await response.json();
-    const detail = data.hits.hits[0]?._source;
-    if (detail) {
-        g.value = detail;
+    details.value = data.hits.hits;
+    if (Array.isArray(details.value) && details.value.length) {
+        g.value = details.value[0]._source;
         status.value = '🟢 游戏信息加载完成';
     } else {
         hint.value.innerText = '🟠 未找到符合条件的游戏';
         status.value = '🔴 未找到符合条件的游戏';
     }
 });
+
+function cleanContent(content) {
+    if (content.startsWith('@#')) {
+        return content.substring(3);
+    }
+}
+
+function checkPOV(player) {
+    for (let i = 0; i < details.value.length; i++) {
+        if (details.value[i]._source.recorder === player.slot) {
+            return details.value[i]._source.md5;
+        }
+    }
+    return null;
+}
 </script>
 
 <template>
@@ -55,71 +71,76 @@ watch(gameid, async () => {
     <div class="game-details1" v-if="g.guid">
         <div class="map">
             <img :src="`https://placehold.co/300x200/png?text=${g.map_name || 'Loading...'}`" width="300" height="200"
-                :alt="g.map_name || '地图缩略图'">
+                :alt="g.map_name || '地图缩略图'" style="max-width: 100%;">
         </div>
-        <fieldset>
-            <legend>玩家信息</legend>
-            <div class="sunken-panel" style="height: 100%;">
-                <table style="width: 100%; height: 100%;">
-                    <thead>
-                        <tr>
-                            <th>位置</th>
-                            <th>编号</th>
-                            <th>玩家 ID</th>
-                            <th>分组</th>
-                            <th>民族</th>
-                            <th>封建时代</th>
-                            <th>城堡时代</th>
-                            <th>帝王时代</th>
-                            <th>投降时间</th>
-                            <th>起始坐标</th>
-                            <th>起始资源</th>
-                            <th>起始人口</th>
-                            <th>获胜</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="n in 8" :key="'player' + n">
-                            <template v-if="g.players[n].playertype > 1">
-                                <td>{{ g.players[n].slot }}</td>
-                                <td>{{ g.players[n].index }}</td>
-                                <td><a href="#" @click.prevent="searchPlayer"
-                                        :style="{ color: playerColors[g.players[n].colorid] }">{{ g.players[n].name
-                                        }}</a></td>
-                                <td>{{ g.players[n].teamid > 1 ? g.players[n].teamid : '-' }}</td>
-                                <td>{{ g.players[n].civ }}</td>
-                                <td>{{ formatDuration(g.players[n].feudaltime) }}</td>
-                                <td>{{ formatDuration(g.players[n].castletime) }}</td>
-                                <td>{{ formatDuration(g.players[n].imperialtime) }}</td>
-                                <td>{{ formatDuration(g.players[n].resigned) }}</td>
-                                <td>[{{ g.players[n].initx }}, {{ g.players[n].inity }}]</td>
-                                <td>{{ g.players[n].initfood }} / {{ g.players[n].initgold }} / {{
-                                    g.players[n].initwood
-                                }}
-                                    / {{ g.players[n].initstone }}</td>
-                                <td>{{ g.players[n].initpop }}({{ g.players[n].initmilitary }})</td>
-                                <td>{{ g.players[n].winner ? '🗹' : '─' }}</td>
-                            </template>
-                            <template v-else>
-                                <td>{{ g.players[n].slot }}</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </template>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </fieldset>
+        <div style="overflow: auto;">
+            <fieldset>
+                <legend>玩家信息</legend>
+                <div class="sunken-panel" style="height: 100%;">
+                    <table style="width: 100%; height: 100%;">
+                        <thead>
+                            <tr>
+                                <th>位置</th>
+                                <th>编号</th>
+                                <th>玩家 ID</th>
+                                <th>分组</th>
+                                <th>民族</th>
+                                <th>封建时代</th>
+                                <th>城堡时代</th>
+                                <th>帝王时代</th>
+                                <th>投降时间</th>
+                                <th>起始坐标</th>
+                                <th>起始资源</th>
+                                <th>起始人口</th>
+                                <th>获胜</th>
+                                <th>下载</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="n in 8" :key="'player' + n">
+                                <template v-if="g.players[n].playertype > 1">
+                                    <td>{{ g.players[n].slot }}</td>
+                                    <td>{{ g.players[n].index }}</td>
+                                    <td><a href="#" @click.prevent="searchPlayer"
+                                            :style="{ color: playerColors[g.players[n].colorid] }">{{ g.players[n].name
+                                            }}</a></td>
+                                    <td>{{ g.players[n].teamid > 1 ? g.players[n].teamid : '-' }}</td>
+                                    <td>{{ g.players[n].civ }}</td>
+                                    <td>{{ formatDuration(g.players[n].feudaltime) }}</td>
+                                    <td>{{ formatDuration(g.players[n].castletime) }}</td>
+                                    <td>{{ formatDuration(g.players[n].imperialtime) }}</td>
+                                    <td>{{ formatDuration(g.players[n].resigned) }}</td>
+                                    <td>[{{ g.players[n].initx }}, {{ g.players[n].inity }}]</td>
+                                    <td>{{ g.players[n].initfood }} / {{ g.players[n].initgold }} / {{
+                                        g.players[n].initwood }} / {{ g.players[n].initstone }}</td>
+                                    <td>{{ g.players[n].initpop }}({{ g.players[n].initmilitary }})</td>
+                                    <td>{{ g.players[n].winner ? '🗹' : '─' }}</td>
+                                    <td style="text-align: center;">
+                                        <a v-if="(pov = checkPOV(g.players[n]))" :href="`${ pov }.zip`">📥</a>
+                                    </td>
+                                </template>
+                                <template v-else>
+                                    <td>{{ g.players[n].slot }}</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </template>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </fieldset>
+        </div>
     </div>
     <div class="game-details2" v-if="g.guid">
         <fieldset>
@@ -138,26 +159,41 @@ watch(gameid, async () => {
                 <strong>时长：</strong><span>{{ formatDuration(g.duration) }}</span>
                 <strong>游戏时间：</strong><span>{{ formatDate(g.lastmod) }}</span>
                 <strong>游戏类型：</strong><span>{{ g.gametype }}</span>
-                <strong>立即建造：</strong><span>{{ g.instantbuild }}</span>
-                <strong>锁定组队：</strong><span>{{ g.lockteams }}</span>
-                <strong>锁定外交：</strong><span>{{ g.lockdiplomacy }}</span>
-                <strong>包含 AI：</strong><span>{{ g.include_ai }}</span>
-                <strong>去除阴影：</strong><span>{{ g.nofog }}</span>
+                <strong>立即建造：</strong><span>{{ g.instantbuild ? '🗹' : '🗵' }}</span>
+                <strong>锁定组队：</strong><span>{{ g.lockteams ? '🗹' : '🗵' }}</span>
+                <strong>锁定外交：</strong><span>{{ g.lockdiplomacy ? '🗹' : '🗵' }}</span>
+                <strong>包含 AI：</strong><span>{{ g.include_ai ? '🗹' : '🗵' }}</span>
+                <strong>去除阴影：</strong><span>{{ g.nofog ? '🗹' : '🗵' }}</span>
                 <strong>地图可见：</strong><span>{{ g.revealmap }}</span>
                 <strong>人口上限：</strong><span>{{ g.poplimit }}</span>
                 <strong>获胜方式：</strong><span>{{ g.victorytype }}</span>
-                <strong>允许作弊：</strong><span>{{ g.enablecheats }}</span>
+                <strong>允许作弊：</strong><span>{{ g.enablecheats ? '🗹' : '🗵' }}</span>
             </div>
         </fieldset>
         <fieldset>
             <legend>对话记录</legend>
-            <textarea style="width: 100%; height: 100%; overflow: auto;">{{ g.chat.reduce((acc, cur) => acc +
-                `[${formatDuration(cur.time) ?? '-'}] ${cur.content}\n`, '') }}</textarea>
+            <textarea style="width: 100%; height: 100%; overflow: auto;" rows="14">{{ g.chat.reduce((acc, cur) => acc +
+                `[${formatDuration(cur.time) ?? '-'}] ${cleanContent(cur.content)}\n`, '') }}</textarea>
         </fieldset>
+    </div>
+    <div class="filenames" v-if="details">
+        <a :href="`/${g._source.md5}.zip`" v-for="g in details">{{ g._source.filename }}</a>
     </div>
 </template>
 
 <style scoped>
+.filenames {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: end;
+    margin: .5rem 0;
+}
+
+.filenames a {
+    color: inherit;
+}
+
 .game-query-bar {
     display: flex;
     align-items: center;
@@ -166,7 +202,7 @@ watch(gameid, async () => {
 }
 
 #gameid-input {
-    min-width: 30%;
+    min-width: 33%;
 }
 
 .game-details1 {
@@ -179,7 +215,13 @@ watch(gameid, async () => {
 .game-details2 {
     display: grid;
     gap: 10px;
-    grid-template-columns: 2fr 3fr 3fr;
+    grid-template-columns: 3fr 3fr 3fr;
+}
+
+@media (max-width: 768px) {
+    .game-details1, .game-details2 {
+        grid-template-columns: 1fr;
+    }
 }
 
 .map {

@@ -19,7 +19,7 @@ const reset = () => {
         <input type="text" v-model="mainKeywords" placeholder="搜索（请优先使用条件筛选）..." />
         <button @click="reset">重置条件</button>
         <button style="color: purple;" @click="activeTab='upload'">上传存档</button>
-        <a href="#">网站公告</a>
+        <a href="//news.aocrec.com">网站公告</a>
     </div>
 </template>
 
@@ -35,7 +35,7 @@ const reset = () => {
 }
 
 .search-row input {
-    min-width: 24rem;
-    margin-left: 2rem;
+    min-width: 33%;
+    margin-left: 1rem;
 }
 </style>

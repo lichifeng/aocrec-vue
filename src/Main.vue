@@ -43,12 +43,18 @@ provide('selectedFilters', toRefs(selectedFilters));
 <template>
     <div class="window">
         <div class="title-bar">
-            <div class="title-bar-text">帝国时代档案库</div>
+            <div class="title-bar-text">🛕 帝国时代档案库</div>
         </div>
         <SearchBar />
         <FilterPanel />
         <TabPanel />
         <StatusBar />
+    </div>
+    <div class="friend-links">
+        <a href="https://www.hawkaoe.net/bbs/">翔鹰帝国网</a>
+        <a href="http://hdbbs.fxt365.com/forum-94-1.html">_XJL_征服者联盟</a>
+        <a href="http://hd.fxt365.com/">互动对战平台</a>
+        <a href="http://hdbbs.fxt365.com/forum-64-1.html">互动平台征服者版块</a>
     </div>
     <div class="copyright">2017-2024 帝国时代档案库</div>
 </template>
@@ -62,6 +68,17 @@ provide('selectedFilters', toRefs(selectedFilters));
     text-align: center;
     margin: 1rem auto;
     color: #808080
+}
+
+.friend-links {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1rem auto;
+}
+
+.friend-links a {
+    color: inherit;
 }
 </style>
 

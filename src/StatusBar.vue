@@ -59,9 +59,9 @@ onMounted(async () => {
 
 <template>
     <div class="status-bar">
-        <p class="status-bar-field">总游戏数量： {{ stats.totalGames }}</p>
-        <p class="status-bar-field">总玩家数量： {{ stats.totalPlayers }}</p>
-        <p class="status-bar-field">本月新增游戏： {{ stats.recentUploads }}</p>
+        <p class="status-bar-field">游戏总数： {{ stats.totalGames }}</p>
+        <p class="status-bar-field">玩家总数： {{ stats.totalPlayers }}</p>
+        <p class="status-bar-field">本月上传： {{ stats.recentUploads }}</p>
         <p class="status-bar-field" style="text-align: center;">{{ status }}</p>
     </div>
 </template>

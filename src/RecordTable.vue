@@ -25,6 +25,19 @@ watchEffect(() => {
 
 async function update(currentPage, pageSize) {
     if (Object.keys(props.query).length === 0) return;
+
+    let sort = [
+        { "_score": "desc" },
+        { "duration": "desc" },
+        { "lastmod": "desc" }
+    ];
+    if (props.query.match_all) {
+        sort = [
+            { "_score": "desc" },
+            { "lastmod": "desc" },
+            { "duration": "desc" }
+        ];
+    }
     try {
         status.value = '🟡 正在查询记录...';
         const response = await fetch(server.url, {
@@ -33,18 +46,14 @@ async function update(currentPage, pageSize) {
                 from: (currentPage - 1) * pageSize,
                 size: pageSize,
                 query: props.query,
-                sort: [
-                    { "_score": "desc" },
-                    { "lastmod": "desc" },
-                    { "duration": "desc" }
-                ],
+                sort,
                 collapse: { field: "guid" }
             })
         });
         const data = await checkResponse(response, 'Failed to fetch records');
         records.value = data.hits.hits.map(hit => hit._source);
         totalHits.value = data.hits.total.value;
-        status.value = `🟢 已加载 ${ records.value.length } / ${ totalHits.value } 条记录`;
+        status.value = `🟢 已加载 ${records.value.length} / ${totalHits.value} 条记录`;
     } catch (error) {
         status.value = '🔴 查询记录失败';
         console.error('Failed to fetch records:', error);
@@ -88,19 +97,20 @@ const loadGame = (e) => {
                     <th>分组</th>
                     <th>速度</th>
                     <th>时长</th>
-                    <th v-for="n in 8">玩家{{ n }}</th>
+                    <th v-for="n in 8">玩家 {{ n }}</th>
                     <th>查看</th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="r in records">
+                <tr v-for="r in records" :title="r.instructions" :key="r.guid">
                     <td>{{ r.ver }}</td>
                     <td>{{ r.mapsize }}</td>
                     <td>{{ r.matchup }}</td>
                     <td>{{ r.speed }}</td>
                     <td>{{ formatDuration(r.duration) }}</td>
                     <td v-for="n in 8" v-html="formatPlayer(r.players[n])" @click="searchPlayer"></td>
-                    <td style="text-align: center;"><a href="#" @click.prevent="loadGame" v-bind:guid="r.guid">👁</a></td>
+                    <td style="text-align: center;"><a href="#" @click.prevent="loadGame" v-bind:guid="r.guid">👁</a>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -109,9 +119,9 @@ const loadGame = (e) => {
         <button :disabled="currentPage === 1" @click="currentPage = 1">回到首页</button>
         <button :disabled="currentPage === 1" @click="currentPage > 1 ? currentPage-- : currentPage">上一页</button>
         <select v-model="pageSize" @change="currentPage = 1">
-            <option value="20">20条/页</option>
-            <option value="50">50条/页</option>
-            <option value="100">100条/页</option>
+            <option value="20">20 条/页</option>
+            <option value="50">50 条/页</option>
+            <option value="100">100 条/页</option>
         </select>
         <span>第 {{ currentPage }} / {{ maxPage() }} 页</span>
         <button :disabled="currentPage === maxPage()"

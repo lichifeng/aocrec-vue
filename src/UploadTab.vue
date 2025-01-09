@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { formatDate } from './funcs';
 
-const serverUrl = 'http://127.0.0.1:3000/upload';
+const serverUrl = 'https://upload.aocrec.com/upload';
 const allowedExtensions = ref(['.mgx', '.mgz', '.mgx2', '.mgl']);
 const maxFileSize = 30 * 1024 * 1024;
 const maxSimultaneous = 3;
