@@ -5,6 +5,7 @@ import { watchEffect, inject, ref } from 'vue';
 const mainKeywords = inject('mainKeywords');
 const selectedFilters = inject('selectedFilters');
 const queryBuilt = ref({});
+const filters = inject('filters');
 
 watchEffect(async () => {
     const must = [];
@@ -88,7 +89,7 @@ watchEffect(async () => {
                             bool: {
                                 must_not: {
                                     terms: {
-                                        [field]: this.filters[field]
+                                        [field]: filters.value[field]
                                     }
                                 }
                             }

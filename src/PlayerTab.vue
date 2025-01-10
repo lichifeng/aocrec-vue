@@ -1,5 +1,5 @@
 <script setup>
-import { inject, ref, watchEffect } from 'vue';
+import { inject, ref, watch } from 'vue';
 import RecordTable from './RecordTable.vue';
 
 const queryBuilt = ref({});
@@ -16,6 +16,7 @@ const playerStats = ref({
 const relatedNames = ref([]);
 const playerNameRef = ref('');
 const status = inject('status');
+const activeTab = inject('activeTab');
 
 const putbackName = () => {
     if (playerNameRef.value.length > 0) {
@@ -23,23 +24,23 @@ const putbackName = () => {
     }
 };
 
-watchEffect(() => {
-    if (!playerStats.value?.totalGames && queryName.value.length > 0) searchPlayer();
-});
-
-const searchPlayer = async () => {
+const searchPlayer = async (e) => {
     queryName.value = queryName.value.trim();
-    if (!queryName.value.length) return;
+    if (!queryName.value.length) {
+        relatedNames.value = [];
+        playerNameRef.value = '';
+        playerStats.value = {
+            queryName: null,
+            totalGames: null,
+            gamesWithResult: null,
+            wonGames: null,
+            winRate: null,
+            commonTeammates: []
+        };
+        queryBuilt.value = {};
+        return;
+    }
     playerNameRef.value = queryName.value;
-    relatedNames.value = [];
-    playerStats.value = {
-        queryName: null,
-        totalGames: null,
-        gamesWithResult: null,
-        wonGames: null,
-        winRate: null,
-        commonTeammates: []
-    };
 
     queryBuilt.value = {
         nested: {
@@ -137,7 +138,11 @@ const searchPlayer = async () => {
                 winRate,
                 commonTeammates
             };
-            status.value = `🟢 ${queryName.value} 的统计数据已加载`;
+            if (totalGames) {
+                status.value = `🟢 ${queryName.value} 的统计数据已加载`;
+            } else {
+                status.value = `🟡 未找到名为 ${queryName.value} 的统计数据`;
+            }
         }).catch(error => {
             status.value = `🔴 查询 ${queryName.value} 的统计数据失败`;
             console.error('Failed to fetch player data:', error);
@@ -178,11 +183,12 @@ const searchPlayer = async () => {
             })
         }).then(async data => {
             const relatedData = await data.json();
-            if (relatedData?.aggregations?.unique_players?.filtered?.by_name?.buckets) {
+            if (relatedData?.aggregations?.unique_players?.filtered?.by_name?.buckets.length) {
                 relatedNames.value = relatedData.aggregations.unique_players.filtered.by_name.buckets.map(b => b.key);
                 status.value = `🟢 ${queryName.value} 的相似 ID 已加载`;
             } else {
-                status.value = `🔴 未找到名为 ${queryName.value} ID`;
+                relatedNames.value = [];
+                status.value = `🟡 未找到名为 ${queryName.value} ID`;
             }
         }).catch(error => {
             status.value = `🔴 查询 ${queryName.value} 的相似 ID 失败`;
@@ -193,16 +199,18 @@ const searchPlayer = async () => {
         console.error('Failed to fetch player data:', error);
     }
 }
+
+watch(queryName, searchPlayer);
 </script>
 
 <template>
     <div class="player-search-bar">
-        <input type="text" v-model.trim="queryName" placeholder="输入玩家ID搜索档案" />
+        <input type="text" v-model.lazy.trim="queryName" placeholder="输入玩家ID搜索档案" @change="searchPlayer" />
         <button @click="searchPlayer">查询玩家</button>
-        <div v-if="playerNameRef != queryName" class="hint blink">✨ 关键词与当前结果不同，请点击按钮刷新数据</div>
+        <button @click="queryName = ''">重置</button>
+        <div v-if="playerNameRef != queryName" class="hint">✨ 关键词与当前结果不同，请点击按钮刷新数据</div>
     </div>
-    <div v-if="playerStats.totalGames"
-        style="display: grid; grid-template-columns: repeat(5, minmax(100px, 1fr)); gap: 5px;margin-bottom: .5rem;">
+    <div v-if="playerStats.totalGames" class="player-stats">
         <div><strong>当前 ID：</strong><a href="#" @click.prevent="putbackName">{{ playerNameRef }}</a></div>
         <div><strong>游戏总数：</strong>{{ playerStats.totalGames }}</div>
         <div><strong>已知结果：</strong>{{ playerStats.gamesWithResult }}</div>
@@ -218,13 +226,21 @@ const searchPlayer = async () => {
     </div>
     <div v-if="relatedNames.length" style="margin-bottom: 1rem;display: flex;flex-wrap: wrap;gap: .2em 1em;">
         <strong>相似 ID：</strong>
-        <a href="#" v-for="(name, index) in relatedNames" :key="index"
-            @click.prevent="queryName = name; if (playerStats.totalGames === 0) searchPlayer();">{{ name }}</a>
+        <a href="#" v-for="(name, index) in relatedNames" :key="index" @click.prevent="queryName = name">{{ name }}</a>
     </div>
+    <div v-if="!relatedNames.length && !playerStats.totalGames && queryName.length" style="margin: .5rem 0;">🙁
+        没有找到满足条件玩家档案</div>
     <RecordTable :query="queryBuilt" />
 </template>
 
 <style scoped>
+.player-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .2rem 2rem;
+    margin-bottom: .5rem;
+}
+
 .player-search-bar {
     display: flex;
     justify-content: start;
@@ -241,15 +257,5 @@ input {
     color: purple;
     font-weight: bold;
     font-size: 120%;
-}
-
-.blink {
-    animation: blinker 2s linear infinite;
-}
-
-@keyframes blinker {
-    50% {
-        opacity: 0;
-    }
 }
 </style>

@@ -64,7 +64,7 @@ function processQueue() {
 function updateResult(file, result) {
     if (file) {
         if (result.guid) {
-            file.status = `<a href="/download/${result.guid}" target="_blank">下载链接</a>`;
+            file.status = `<a href="/#${result.guid}" target="_blank">查看</a>`;
         } else {
             file.progress = -1;
             file.status = `${result.error || '上传失败'}`;
@@ -132,15 +132,13 @@ function clearCompleted() {
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="file in fileList" :key="file.name">
+                <tr v-for="file in fileList" :key="file.name" :style="{ backgroundColor: file.progress === 100 ? 'lightgreen' : 'inherit' }">
                     <td>{{ file.name }}</td>
                     <td>{{ formatSize(file.size) }}</td>
                     <td>{{ formatDate(file.lastModified) }}</td>
                     <td class="progress-cell">
                         <span v-if="file.error || file.progress < 0" class="error">错误</span>
-                        <span v-else :style="{
-                            color: file.progress == 100 ? 'grassgreen' : 'inherit'
-                        }">{{ file.progress.toFixed(1) }}%</span>
+                        <span v-else :style="{ color: file.progress == 100 ? 'green' : 'inherit' }">{{ file.progress.toFixed(1) }}%</span>
                     </td>
                     <td v-html="file.status" :title="file.progress"></td>
                 </tr>

@@ -4,7 +4,7 @@ import { checkResponse } from './funcs';
 
 const server = inject('remote');
 const selectedFilters = inject('selectedFilters');
-const filters = ref({});
+const filters = inject('filters');
 const activeTab = inject('activeTab');
 
 watchEffect(() => {

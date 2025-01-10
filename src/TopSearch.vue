@@ -11,6 +11,7 @@ const reset = () => {
     for (const key in selectedFilters) {
         selectedFilters[key].value = [];
     }
+    window.location.hash = '';
 };
 </script>
 

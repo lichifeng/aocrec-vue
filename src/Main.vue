@@ -3,7 +3,7 @@ import SearchBar from './TopSearch.vue';
 import FilterPanel from './FilterPanel.vue';
 import TabPanel from './TabPanel.vue';
 import StatusBar from './StatusBar.vue';
-import { provide, ref, reactive, toRefs } from 'vue';
+import { provide, ref, reactive, toRefs, onMounted } from 'vue';
 
 const activeTab = ref('list');
 provide('activeTab', activeTab);
@@ -11,6 +11,7 @@ provide('mainKeywords', ref(''));
 provide('queryName', ref(''));
 provide('queryGuid', ref(''));
 provide('status', ref('-'));
+provide('filters', ref({}));
 
 provide('remote', {
     url: 'https://api2.aocrec.com/records_demo/_search',

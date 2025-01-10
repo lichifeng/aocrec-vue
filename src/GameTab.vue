@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, useTemplateRef, inject } from 'vue';
+import { ref, watch, useTemplateRef, inject, onMounted } from 'vue';
 import { formatDuration, playerColors, formatDate } from './funcs';
 
 const server = inject('remote');
@@ -10,6 +10,7 @@ const status = inject('status');
 const queryName = inject('queryName');
 const activeTab = inject('activeTab');
 const details = ref(null);
+const queryGuid = inject('queryGuid');
 
 const searchPlayer = (e) => {
     if (e.target.tagName !== 'A') return;
@@ -60,6 +61,15 @@ function checkPOV(player) {
     }
     return null;
 }
+
+onMounted(() => {
+    console.log(window.location.hash);
+    const currentPath = window.location.hash;
+    if (currentPath.length == 33) {
+        queryGuid.value = currentPath.substring(1);
+        activeTab.value = 'game';
+    }
+});
 </script>
 
 <template>
@@ -110,13 +120,15 @@ function checkPOV(player) {
                                     <td>{{ formatDuration(g.players[n].castletime) }}</td>
                                     <td>{{ formatDuration(g.players[n].imperialtime) }}</td>
                                     <td>{{ formatDuration(g.players[n].resigned) }}</td>
-                                    <td>[{{ g.players[n].initx }}, {{ g.players[n].inity }}]</td>
-                                    <td>{{ g.players[n].initfood }} / {{ g.players[n].initgold }} / {{
-                                        g.players[n].initwood }} / {{ g.players[n].initstone }}</td>
+                                    <td>[{{ g.players[n].initx.toFixed(1) }}, {{ g.players[n].inity.toFixed(1) }}]</td>
+                                    <td>{{ Math.round(g.players[n].initfood) }} / {{ Math.round(g.players[n].initgold)
+                                        }} / {{
+                                        Math.round(g.players[n].initwood) }} / {{ Math.round(g.players[n].initstone) }}
+                                    </td>
                                     <td>{{ g.players[n].initpop }}({{ g.players[n].initmilitary }})</td>
-                                    <td>{{ g.players[n].winner ? '🗹' : '─' }}</td>
+                                    <td>{{ g.players[n].winner ? '✅' : '─' }}</td>
                                     <td style="text-align: center;">
-                                        <a v-if="(pov = checkPOV(g.players[n]))" :href="`${ pov }.zip`">📥</a>
+                                        <a v-if="(povmd5 = checkPOV(g.players[n]))" :href="`/download/${povmd5}.zip`">📥</a>
                                     </td>
                                 </template>
                                 <template v-else>
@@ -159,15 +171,15 @@ function checkPOV(player) {
                 <strong>时长：</strong><span>{{ formatDuration(g.duration) }}</span>
                 <strong>游戏时间：</strong><span>{{ formatDate(g.lastmod) }}</span>
                 <strong>游戏类型：</strong><span>{{ g.gametype }}</span>
-                <strong>立即建造：</strong><span>{{ g.instantbuild ? '🗹' : '🗵' }}</span>
-                <strong>锁定组队：</strong><span>{{ g.lockteams ? '🗹' : '🗵' }}</span>
-                <strong>锁定外交：</strong><span>{{ g.lockdiplomacy ? '🗹' : '🗵' }}</span>
-                <strong>包含 AI：</strong><span>{{ g.include_ai ? '🗹' : '🗵' }}</span>
-                <strong>去除阴影：</strong><span>{{ g.nofog ? '🗹' : '🗵' }}</span>
+                <strong>立即建造：</strong><span>{{ g.instantbuild ? '✅' : '❎' }}</span>
+                <strong>锁定组队：</strong><span>{{ g.lockteams ? '✅' : '❎' }}</span>
+                <strong>锁定外交：</strong><span>{{ g.lockdiplomacy ? '✅' : '❎' }}</span>
+                <strong>包含 AI：</strong><span>{{ g.include_ai ? '✅' : '❎' }}</span>
+                <strong>去除阴影：</strong><span>{{ g.nofog ? '✅' : '❎' }}</span>
                 <strong>地图可见：</strong><span>{{ g.revealmap }}</span>
                 <strong>人口上限：</strong><span>{{ g.poplimit }}</span>
                 <strong>获胜方式：</strong><span>{{ g.victorytype }}</span>
-                <strong>允许作弊：</strong><span>{{ g.enablecheats ? '🗹' : '🗵' }}</span>
+                <strong>允许作弊：</strong><span>{{ g.enablecheats ? '✅' : '❎' }}</span>
             </div>
         </fieldset>
         <fieldset>
@@ -219,7 +231,9 @@ function checkPOV(player) {
 }
 
 @media (max-width: 768px) {
-    .game-details1, .game-details2 {
+
+    .game-details1,
+    .game-details2 {
         grid-template-columns: 1fr;
     }
 }
@@ -236,6 +250,11 @@ function checkPOV(player) {
 tbody td {
     padding: .2em;
     border: 1px solid #ccc;
+}
+
+tbody tr:hover {
+    background-color: navy;
+    color: #fff;
 }
 
 .basic {

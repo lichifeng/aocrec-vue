@@ -24,7 +24,12 @@ watchEffect(() => {
 });
 
 async function update(currentPage, pageSize) {
-    if (Object.keys(props.query).length === 0) return;
+    if (Object.keys(props.query).length === 0) {
+        records.value = [];
+        totalHits.value = 0;
+        status.value = '🟢 已加载 0 / 0 条记录';
+        return;
+    }
 
     let sort = [
         { "_score": "desc" },
@@ -84,6 +89,7 @@ const searchPlayer = (e) => {
 const loadGame = (e) => {
     queryGuid.value = e.target.getAttribute('guid');
     activeTab.value = 'game';
+    window.location.hash = queryGuid.value;
 }
 </script>
 
@@ -109,7 +115,7 @@ const loadGame = (e) => {
                     <td>{{ r.speed }}</td>
                     <td>{{ formatDuration(r.duration) }}</td>
                     <td v-for="n in 8" v-html="formatPlayer(r.players[n])" @click="searchPlayer"></td>
-                    <td style="text-align: center;"><a href="#" @click.prevent="loadGame" v-bind:guid="r.guid">👁</a>
+                    <td style="text-align: center;"><a :href="`/#${r.guid}`" @click.prevent="loadGame" v-bind:guid="r.guid">👁</a>
                     </td>
                 </tr>
             </tbody>
@@ -136,6 +142,7 @@ const loadGame = (e) => {
     align-items: center;
     justify-content: end;
     margin-top: 1em;
+    flex-wrap: wrap;
 }
 
 tbody tr:hover {
