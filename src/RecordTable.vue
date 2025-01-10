@@ -76,7 +76,7 @@ const formatPlayer = (player) => {
         `城堡时代: ${formatDuration(player.castletime) ?? '/'}\n` +
         `帝王时代: ${formatDuration(player.imperialtime) ?? '/'}\n` +
         `投降时间: ${formatDuration(player.resigned) ?? '/'}`;
-    return `[${teamid} ${civ}] <a href="#" class="player-link" style="color: ${color}" title="${title}">${name}</a>`;
+    return `[${teamid} ${civ}] <a href="#" class="player-link" style="color: ${color}" title="${title}">${name}</a> ${player.playertype == 4 ? `(电脑)` : ''}`;
 
 }
 

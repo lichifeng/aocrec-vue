@@ -1,13 +1,15 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, inject } from 'vue';
 import { formatDate } from './funcs';
 
-const serverUrl = 'https://upload.aocrec.com/upload';
+const serverUrl = 'https://upload.aocrec.com';
 const allowedExtensions = ref(['.mgx', '.mgz', '.mgx2', '.mgl']);
 const maxFileSize = 30 * 1024 * 1024;
 const maxSimultaneous = 3;
 let fileList = ref([]);
 const currentUploads = ref(0);
+const queryGuid = inject('queryGuid');
+const activeTab = inject('activeTab');
 
 function formatSize(bytes) {
     if (bytes === 0) return '0 B';
@@ -64,7 +66,8 @@ function processQueue() {
 function updateResult(file, result) {
     if (file) {
         if (result.guid) {
-            file.status = `<a href="/#${result.guid}" target="_blank">查看</a>`;
+            file.status = '';
+            file.guid = result.guid;
         } else {
             file.progress = -1;
             file.status = `${result.error || '上传失败'}`;
@@ -111,6 +114,12 @@ function uploadFile(file, index) {
 function clearCompleted() {
     fileList.value = fileList.value.filter(file => file.progress !== 100 && file.progress !== -1);
 }
+
+const loadGame = (e) => {
+    queryGuid.value = e.target.getAttribute('guid');
+    activeTab.value = 'game';
+    window.location.hash = queryGuid.value;
+}
 </script>
 
 <template>
@@ -140,7 +149,10 @@ function clearCompleted() {
                         <span v-if="file.error || file.progress < 0" class="error">错误</span>
                         <span v-else :style="{ color: file.progress == 100 ? 'green' : 'inherit' }">{{ file.progress.toFixed(1) }}%</span>
                     </td>
-                    <td v-html="file.status" :title="file.progress"></td>
+                    <td>
+                        <a href="#" v-if="file.guid" @click.prevent="loadGame" v-bind:guid="file.guid">查看</a>
+                        <span v-html"file.status"></span>
+                    </td>
                 </tr>
             </tbody>
         </table>

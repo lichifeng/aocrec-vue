@@ -42,7 +42,8 @@ watch(gameid, async () => {
         g.value = details.value[0]._source;
         status.value = '🟢 游戏信息加载完成';
     } else {
-        hint.value.innerText = '🟠 未找到符合条件的游戏';
+        g.value = {};
+        hint.value.innerText = '🙁 未找到符合条件的游戏';
         status.value = '🔴 未找到符合条件的游戏';
     }
 });
@@ -113,8 +114,8 @@ onMounted(() => {
                                     <td>{{ g.players[n].index }}</td>
                                     <td><a href="#" @click.prevent="searchPlayer"
                                             :style="{ color: playerColors[g.players[n].colorid] }">{{ g.players[n].name
-                                            }}</a></td>
-                                    <td>{{ g.players[n].teamid > 1 ? g.players[n].teamid : '-' }}</td>
+                                            }}</a> {{ g.players[n].playertype == 4 ? `(电脑)` : '' }}</td>
+                                    <td>{{ g.players[n].teamid > 1 ? g.players[n].teamid : '─' }}</td>
                                     <td>{{ g.players[n].civ }}</td>
                                     <td>{{ formatDuration(g.players[n].feudaltime) }}</td>
                                     <td>{{ formatDuration(g.players[n].castletime) }}</td>
@@ -123,12 +124,13 @@ onMounted(() => {
                                     <td>[{{ g.players[n].initx.toFixed(1) }}, {{ g.players[n].inity.toFixed(1) }}]</td>
                                     <td>{{ Math.round(g.players[n].initfood) }} / {{ Math.round(g.players[n].initgold)
                                         }} / {{
-                                        Math.round(g.players[n].initwood) }} / {{ Math.round(g.players[n].initstone) }}
+                                            Math.round(g.players[n].initwood) }} / {{ Math.round(g.players[n].initstone) }}
                                     </td>
                                     <td>{{ g.players[n].initpop }}({{ g.players[n].initmilitary }})</td>
                                     <td>{{ g.players[n].winner ? '✅' : '─' }}</td>
                                     <td style="text-align: center;">
-                                        <a v-if="(povmd5 = checkPOV(g.players[n]))" :href="`/download/${povmd5}.zip`">📥</a>
+                                        <a v-if="(povmd5 = checkPOV(g.players[n]))"
+                                            :href="`/download/${povmd5}.zip`" style="text-decoration: none;">💾</a>
                                     </td>
                                 </template>
                                 <template v-else>
@@ -189,7 +191,7 @@ onMounted(() => {
         </fieldset>
     </div>
     <div class="filenames" v-if="details">
-        <a :href="`/${g._source.md5}.zip`" v-for="g in details">{{ g._source.filename }}</a>
+        <a :href="`/download/${g._source.md5}.zip`" v-for="g in details">{{ g._source.filename }}</a>
     </div>
 </template>
 

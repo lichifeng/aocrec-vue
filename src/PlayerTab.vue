@@ -219,17 +219,19 @@ watch(queryName, searchPlayer);
     </div>
     <div v-if="playerStats.totalGames" style="margin-bottom: .5rem;display: flex;flex-wrap: wrap;gap: .2em 1em;">
         <strong>共同游戏：</strong>
-        <a href="#" v-for="(teammate, index) in playerStats.commonTeammates" :key="index" class="teammate"
-            @click.prevent="queryName = teammate.name">
-            {{ teammate.name }} ({{ teammate.count }}次)
-        </a>
+        <span v-for="(teammate, index) in playerStats.commonTeammates" :key="index">
+            <a href="#" class="teammate" @click.prevent="queryName = teammate.name">
+                {{ teammate.name }}
+            </a> ({{ teammate.count }}次)
+        </span>
     </div>
     <div v-if="relatedNames.length" style="margin-bottom: 1rem;display: flex;flex-wrap: wrap;gap: .2em 1em;">
         <strong>相似 ID：</strong>
         <a href="#" v-for="(name, index) in relatedNames" :key="index" @click.prevent="queryName = name">{{ name }}</a>
     </div>
-    <div v-if="!relatedNames.length && !playerStats.totalGames && queryName.length" style="margin: .5rem 0;">🙁
-        没有找到满足条件玩家档案</div>
+    <div v-if="!relatedNames.length && !playerStats.totalGames && queryName.length" style="margin: .5rem 0;">
+        🙁 没有找到满足条件玩家档案
+    </div>
     <RecordTable :query="queryBuilt" />
 </template>
 
