@@ -81,8 +81,7 @@ onMounted(() => {
     </div>
     <div class="game-details1" v-if="g.guid">
         <div class="map">
-            <img :src="`https://placehold.co/300x200/png?text=${g.map_name || 'Loading...'}`" width="300" height="200"
-                :alt="g.map_name || '地图缩略图'" style="max-width: 100%;">
+            <img :src="`//static.aocrec.com/map/${g.guid}.png`" :alt="g.map_name || '地图缩略图'" style="max-width: 100%;" class="rotated-image">
         </div>
         <div style="overflow: auto;">
             <fieldset>
@@ -124,13 +123,13 @@ onMounted(() => {
                                     <td>[{{ g.players[n].initx.toFixed(1) }}, {{ g.players[n].inity.toFixed(1) }}]</td>
                                     <td>{{ Math.round(g.players[n].initfood) }} / {{ Math.round(g.players[n].initgold)
                                         }} / {{
-                                            Math.round(g.players[n].initwood) }} / {{ Math.round(g.players[n].initstone) }}
+                                        Math.round(g.players[n].initwood) }} / {{ Math.round(g.players[n].initstone) }}
                                     </td>
                                     <td>{{ g.players[n].initpop }}({{ g.players[n].initmilitary }})</td>
                                     <td>{{ g.players[n].winner ? '✅' : '─' }}</td>
                                     <td style="text-align: center;">
-                                        <a v-if="(povmd5 = checkPOV(g.players[n]))"
-                                            :href="`/download/${povmd5}.zip`" style="text-decoration: none;">💾</a>
+                                        <a v-if="(povmd5 = checkPOV(g.players[n]))" :href="`//static.aocrec.com/record/${povmd5}.zip`"
+                                            style="text-decoration: none;">💾</a>
                                     </td>
                                 </template>
                                 <template v-else>
@@ -191,7 +190,7 @@ onMounted(() => {
         </fieldset>
     </div>
     <div class="filenames" v-if="details">
-        <a :href="`/download/${g._source.md5}.zip`" v-for="g in details">{{ g._source.filename }}</a>
+        <a :href="`//static.aocrec.com/record/${g._source.md5}.zip`" v-for="g in details">{{ g._source.filename }}</a>
     </div>
 </template>
 

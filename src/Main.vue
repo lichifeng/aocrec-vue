@@ -3,7 +3,7 @@ import SearchBar from './TopSearch.vue';
 import FilterPanel from './FilterPanel.vue';
 import TabPanel from './TabPanel.vue';
 import StatusBar from './StatusBar.vue';
-import { provide, ref, reactive, toRefs, onMounted } from 'vue';
+import { provide, ref, reactive, toRefs } from 'vue';
 
 const activeTab = ref('list');
 provide('activeTab', activeTab);
@@ -14,7 +14,7 @@ provide('status', ref('-'));
 provide('filters', ref({}));
 
 provide('remote', {
-    url: 'https://api2.aocrec.com/records_demo/_search',
+    url: 'https://es.aocrec.com/mgxhub/_search',
     config: {
         method: 'POST',
         mode: 'cors',
@@ -44,7 +44,7 @@ provide('selectedFilters', toRefs(selectedFilters));
 <template>
     <div class="window">
         <div class="title-bar">
-            <div class="title-bar-text">🛕 帝国时代档案库</div>
+            <div class="title-bar-text">🛕 <a href="/" style="color: inherit;text-decoration: none;">帝国时代档案库</a></div>
         </div>
         <SearchBar />
         <FilterPanel />
