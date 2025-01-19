@@ -12,10 +12,11 @@ const queryName = inject('queryName');
 const activeTab = inject('activeTab');
 const queryGuid = inject('queryGuid');
 const status = inject('status');
+const orderBy = inject('orderBy');
 
 const maxPage = () => Math.ceil(totalHits.value / pageSize.value);
 
-watch(props, () => {
+watch([props, orderBy], () => {
     currentPage.value = 1;
 });
 
@@ -31,17 +32,31 @@ async function update(currentPage, pageSize) {
         return;
     }
 
-    let sort = [
-        { "_score": "desc" },
-        { "duration": "desc" },
-        { "lastmod": "desc" }
-    ];
-    if (props.query.match_all) {
-        sort = [
-            { "_score": "desc" },
-            { "lastmod": "desc" },
-            { "duration": "desc" }
-        ];
+    let sort = [{ "_score": "desc" }];
+    switch (orderBy.value) {
+        case 'playtime-asc':
+            sort.push(...[
+                { "lastmod": "asc" },
+                { "duration": "desc" }
+            ]);
+            break;
+        case 'duration-desc':
+            sort.push(...[
+                { "duration": "desc" },
+                { "lastmod": "desc" }
+            ]);
+            break;
+        case 'duration-asc':
+            sort.push(...[
+                { "duration": "asc" },
+                { "lastmod": "desc" }
+            ]);
+            break;
+        default:
+            sort.push(...[
+                { "lastmod": "desc" },
+                { "duration": "desc" }
+            ]);
     }
     try {
         status.value = '🟡 正在查询记录...';
@@ -99,6 +114,7 @@ const loadGame = (e) => {
             <thead>
                 <tr>
                     <th>版本</th>
+                    <th>游戏日期</th>
                     <th>地图大小</th>
                     <th>分组</th>
                     <th>速度</th>
@@ -110,12 +126,17 @@ const loadGame = (e) => {
             <tbody>
                 <tr v-for="r in records" :title="r.instructions" :key="r.guid">
                     <td>{{ r.ver }}</td>
+                    <td>{{ new Date(r.lastmod).toLocaleDateString('zh-CN', {
+                        year: 'numeric', month: '2-digit', day:
+                            '2-digit'
+                    }).replace(/\//g, '/') }}</td>
                     <td>{{ r.mapsize }}</td>
                     <td>{{ r.matchup }}</td>
                     <td>{{ r.speed }}</td>
                     <td>{{ formatDuration(r.duration) }}</td>
                     <td v-for="n in 8" v-html="formatPlayer(r.players[n])" @click="searchPlayer"></td>
-                    <td style="text-align: center;"><a :href="`/#${r.guid}`" @click.prevent="loadGame" v-bind:guid="r.guid">👁</a>
+                    <td style="text-align: center;"><a :href="`/#${r.guid}`" @click.prevent="loadGame"
+                            v-bind:guid="r.guid">👁</a>
                     </td>
                 </tr>
             </tbody>

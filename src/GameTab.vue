@@ -29,7 +29,7 @@ watch(gameid, async () => {
     const response = await fetch(server.url, {
         ...server.config,
         body: JSON.stringify({
-            size: 1,
+            size: 8,
             query: {
                 term: { guid: gameid.value }
             },
@@ -64,7 +64,6 @@ function checkPOV(player) {
 }
 
 onMounted(() => {
-    console.log(window.location.hash);
     const currentPath = window.location.hash;
     if (currentPath.length == 33) {
         queryGuid.value = currentPath.substring(1);

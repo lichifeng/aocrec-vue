@@ -16,7 +16,6 @@ const playerStats = ref({
 const relatedNames = ref([]);
 const playerNameRef = ref('');
 const status = inject('status');
-const activeTab = inject('activeTab');
 
 const putbackName = () => {
     if (playerNameRef.value.length > 0) {
@@ -24,7 +23,7 @@ const putbackName = () => {
     }
 };
 
-const searchPlayer = async (e) => {
+const searchPlayer = async () => {
     queryName.value = queryName.value.trim();
     if (!queryName.value.length) {
         relatedNames.value = [];

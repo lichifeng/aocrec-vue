@@ -3,6 +3,7 @@ import SearchBar from './TopSearch.vue';
 import FilterPanel from './FilterPanel.vue';
 import TabPanel from './TabPanel.vue';
 import StatusBar from './StatusBar.vue';
+import OrderOption from './OrderOption.vue';
 import { provide, ref, reactive, toRefs } from 'vue';
 
 const activeTab = ref('list');
@@ -12,6 +13,7 @@ provide('queryName', ref(''));
 provide('queryGuid', ref(''));
 provide('status', ref('-'));
 provide('filters', ref({}));
+provide('orderBy', ref(''));
 
 provide('remote', {
     url: 'https://es.aocrec.com/mgxhub/_search',
@@ -48,6 +50,7 @@ provide('selectedFilters', toRefs(selectedFilters));
         </div>
         <SearchBar />
         <FilterPanel />
+        <OrderOption />
         <TabPanel />
         <StatusBar />
     </div>
