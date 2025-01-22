@@ -187,7 +187,7 @@ const searchPlayer = async () => {
                 status.value = `🟢 ${queryName.value} 的相似 ID 已加载`;
             } else {
                 relatedNames.value = [];
-                status.value = `🟡 未找到名为 ${queryName.value} ID`;
+                status.value = `🟡 未找到与 ${queryName.value} 相关的ID`;
             }
         }).catch(error => {
             status.value = `🔴 查询 ${queryName.value} 的相似 ID 失败`;

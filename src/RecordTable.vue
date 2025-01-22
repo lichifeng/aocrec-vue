@@ -37,19 +37,36 @@ async function update(currentPage, pageSize) {
         case 'playtime-asc':
             sort.push(...[
                 { "lastmod": "asc" },
-                { "duration": "desc" }
+                { "duration": "desc" },
+                { "created_at": "desc" }
             ]);
             break;
         case 'duration-desc':
             sort.push(...[
                 { "duration": "desc" },
-                { "lastmod": "desc" }
+                { "lastmod": "desc" },
+                { "created_at": "desc" }
             ]);
             break;
         case 'duration-asc':
             sort.push(...[
                 { "duration": "asc" },
-                { "lastmod": "desc" }
+                { "lastmod": "desc" },
+                { "created_at": "desc" }
+            ]);
+            break;
+        case 'upload-desc':
+            sort.push(...[
+                { "created_at": "desc" },
+                { "lastmod": "desc" },
+                { "duration": "desc" }
+            ]);
+            break;
+        case 'upload-asc':
+            sort.push(...[
+                { "created_at": "asc" },
+                { "lastmod": "desc" },
+                { "duration": "desc" }
             ]);
             break;
         default:
