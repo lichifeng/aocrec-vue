@@ -19,11 +19,11 @@ const orderBy = inject('orderBy');
                 </div>
                 <div class="order-option">
                     <input type="radio" id="order-by-upload-desc" v-model="orderBy" value="upload-desc" checked>
-                    <label for="order-by-upload-desc">最新上传</label>
+                    <label for="order-by-upload-desc">新上传优先</label>
                 </div>
                 <div class="order-option">
                     <input type="radio" id="order-by-upload-asc" v-model="orderBy" value="upload-asc">
-                    <label for="order-by-upload-asc">最早上传</label>
+                    <label for="order-by-upload-asc">早上传优先</label>
                 </div>
                 <div class="order-option">
                     <input type="radio" id="order-by-duration-desc" v-model="orderBy" value="duration-desc">

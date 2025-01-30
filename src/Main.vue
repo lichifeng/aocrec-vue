@@ -55,12 +55,14 @@ provide('selectedFilters', toRefs(selectedFilters));
         <StatusBar />
     </div>
     <div class="friend-links">
+        <a href="https://www.aoezone.net/">AoEZone</a>
+        <a href="https://aok.heavengames.com/">AGE OF KINGS HEAVEN</a>
         <a href="https://www.hawkaoe.net/bbs/">翔鹰帝国网</a>
         <a href="http://hdbbs.fxt365.com/forum-94-1.html">_XJL_征服者联盟</a>
         <a href="http://hd.fxt365.com/">互动对战平台</a>
         <a href="http://hdbbs.fxt365.com/forum-64-1.html">互动平台征服者版块</a>
     </div>
-    <div class="copyright">2017-2024 帝国时代档案库</div>
+    <div class="copyright">2017-2025 帝国时代档案库</div>
 </template>
 
 <style scoped>
