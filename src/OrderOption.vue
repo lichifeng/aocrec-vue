@@ -14,11 +14,11 @@ const orderBy = inject('orderBy');
                     <label for="order-by-date-asc">老游戏优先</label>
                 </div>
                 <div class="order-option">
-                    <input type="radio" id="order-by-date-desc" v-model="orderBy" value="playtime-desc" checked>
+                    <input type="radio" id="order-by-date-desc" v-model="orderBy" value="playtime-desc">
                     <label for="order-by-date-desc">新游戏优先</label>
                 </div>
                 <div class="order-option">
-                    <input type="radio" id="order-by-upload-desc" v-model="orderBy" value="upload-desc">
+                    <input type="radio" id="order-by-upload-desc" v-model="orderBy" value="upload-desc" checked>
                     <label for="order-by-upload-desc">最新上传</label>
                 </div>
                 <div class="order-option">

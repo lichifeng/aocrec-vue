@@ -19,7 +19,7 @@ export default defineConfig({
     outDir: 'docs'
   },
   server: {
-    host: '127.0.0.1',
+    host: 'local.aocrec.com',
     port: 5500
   }
 })

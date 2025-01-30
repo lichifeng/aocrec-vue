@@ -128,6 +128,7 @@ const loadGame = (e) => {
         <button @click="clearCompleted">清空已完成</button>
         <input type="file" id="fileInput" multiple @change="handleFileSelect" :accept="allowedExtensions.join(', ')" />
         <span>队列中: {{ currentUploads }}</span>
+        <strong>仅支持 AoK(.mgl)、AoC A版/C版(.mgx)、UserPatch(.mgz) 存档，不支持 HD/DE/FE 存档</strong>
     </div>
     <div class="sunken-panel">
         <table style="width: 100%;">

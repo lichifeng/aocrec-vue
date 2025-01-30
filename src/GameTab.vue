@@ -169,9 +169,9 @@ onMounted(() => {
                 <strong>地图大小：</strong><span>{{ g.mapsize }}</span>
                 <strong>速度：</strong><span>{{ g.speed }}</span>
                 <strong>时长：</strong><span>{{ formatDuration(g.duration) }}</span>
-                <strong>游戏时间：</strong><span>{{ formatDate(g.lastmod) }}</span>
+                <strong>游戏日期：</strong><span>{{ formatDate(g.lastmod) }}</span>
                 <strong>游戏类型：</strong><span>{{ g.gametype }}</span>
-                <strong>立即建造：</strong><span>{{ g.instantbuild ? '✅' : '❎' }}</span>
+                <strong>上传日期：</strong><span>{{ formatDate(g.created_at) }}</span>
                 <strong>锁定组队：</strong><span>{{ g.lockteams ? '✅' : '❎' }}</span>
                 <strong>锁定外交：</strong><span>{{ g.lockdiplomacy ? '✅' : '❎' }}</span>
                 <strong>包含 AI：</strong><span>{{ g.include_ai ? '✅' : '❎' }}</span>
