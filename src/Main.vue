@@ -81,6 +81,7 @@ provide('selectedFilters', toRefs(selectedFilters));
     justify-content: center;
     gap: 1rem;
     margin: 1rem auto;
+    align-items: baseline;
 }
 
 .friend-links a {
