@@ -20,7 +20,7 @@ const reset = () => {
         <input type="text" v-model="mainKeywords" @change="activeTab = 'list'" placeholder="搜索（请优先使用条件筛选）..." />
         <button @click="reset">重置条件</button>
         <button style="color: purple;" @click="activeTab='upload'">上传存档</button>
-        <a href="//news.aocrec.com">网站公告</a>
+        <a href="//file.aocrec.com">常用文件下载</a>
     </div>
 </template>
 

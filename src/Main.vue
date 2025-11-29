@@ -62,7 +62,7 @@ provide('selectedFilters', toRefs(selectedFilters));
         <a href="http://hd.fxt365.com/">互动对战平台</a>
         <a href="http://hdbbs.fxt365.com/forum-64-1.html">互动平台征服者版块</a>
     </div>
-    <div class="copyright">2017-2025 帝国时代档案库</div>
+    <div class="copyright">2017-2026 帝国时代档案库</div>
 </template>
 
 <style scoped>
