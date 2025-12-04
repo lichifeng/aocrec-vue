@@ -9,6 +9,10 @@ const reset = () => {
     mainKeywords.value = '';
     activeTab.value = 'list';
     for (const key in selectedFilters) {
+        if (['filterShortDuration', 'filterAI'].includes(key)) {
+            selectedFilters[key].value = [true];
+            continue;
+        }
         selectedFilters[key].value = [];
     }
     window.location.hash = '';

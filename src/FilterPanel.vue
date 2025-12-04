@@ -63,6 +63,10 @@ onMounted(async () => {
     filters.value.victorytype = data.aggregations.victorytypes.buckets.map(b => b.key);
     filters.value.revealmap = data.aggregations.revealmaps.buckets.map(b => b.key);
     filters.value.civs = data.aggregations.civs.unique_civs.buckets.map(b => b.key);
+    
+    // Initialize the "Other Conditions" filters (no need to fetch from server)
+    filters.value.filterShortDuration = [true];
+    filters.value.filterAI = [true];
 });
 </script>
 
@@ -169,6 +173,19 @@ onMounted(async () => {
                         </div>
                     </div>
                 </div>
+                <div class="expanded filter-option">
+                    <h4>其它条件：</h4>
+                    <div class="filter-option-items">
+                        <div class="filter-option-item">
+                            <input type="checkbox" id="filter-short-duration" v-model="selectedFilters.filterShortDuration.value" :value="true">
+                            <label for="filter-short-duration">过滤10分钟以下存档</label>
+                        </div>
+                        <div class="filter-option-item">
+                            <input type="checkbox" id="filter-ai" v-model="selectedFilters.filterAI.value" :value="true">
+                            <label for="filter-ai">过滤打电脑存档</label>
+                        </div>
+                    </div>
+                </div>
             </div>
         </fieldset>
     </div>
@@ -195,8 +212,9 @@ onMounted(async () => {
 }
 
 .filter-option-item {
-    margin: auto .5em .5em;
+    margin: auto .5em;
     min-width: 4em;
+    line-height: 1.6;
 }
 
 .filter-option>h4 {

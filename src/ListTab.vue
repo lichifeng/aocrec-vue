@@ -115,6 +115,30 @@ watchEffect(async () => {
                     }
                 }));
                 must.push({ bool: { must: civsMust } });
+            } else if (field === 'filterShortDuration') {
+                // Filter out recordings under 10 minutes (600000 milliseconds)
+                if (values.value.includes(true)) {
+                    must.push({
+                        range: {
+                            duration: {
+                                gte: 600000
+                            }
+                        }
+                    });
+                }
+            } else if (field === 'filterAI') {
+                // Filter out AI games (include_ai: true)
+                if (values.value.includes(true)) {
+                    must.push({
+                        bool: {
+                            must_not: {
+                                term: {
+                                    include_ai: true
+                                }
+                            }
+                        }
+                    });
+                }
             } else {
                 must.push({
                     terms: {

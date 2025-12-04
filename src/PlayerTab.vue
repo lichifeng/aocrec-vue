@@ -75,7 +75,10 @@ const searchPlayer = async () => {
                 aggs: {
                     total_games: { cardinality: { field: "guid" } },
                     games_with_result: {
-                        filter: { term: { haswinner: true } }
+                        filter: { term: { haswinner: true } },
+                        aggs: {
+                            unique_games: { cardinality: { field: "guid" } }
+                        }
                     },
                     player_stats: {
                         nested: { path: "players" },
@@ -86,7 +89,15 @@ const searchPlayer = async () => {
                                 },
                                 aggs: {
                                     won_games: {
-                                        filter: { term: { "players.winner": true } }
+                                        filter: { term: { "players.winner": true } },
+                                        aggs: {
+                                            back_to_root: {
+                                                reverse_nested: {},
+                                                aggs: {
+                                                    unique_won_games: { cardinality: { field: "guid" } }
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -122,8 +133,8 @@ const searchPlayer = async () => {
         }).then(async data => {
             const statsData = await data.json();
             const totalGames = statsData.aggregations.total_games.value;
-            const gamesWithResult = statsData.aggregations.games_with_result.doc_count;
-            const wonGames = statsData.aggregations.player_stats.matching_player.won_games.doc_count;
+            const gamesWithResult = statsData.aggregations.games_with_result.unique_games.value;
+            const wonGames = statsData.aggregations.player_stats.matching_player.won_games.back_to_root.unique_won_games.value;
             const winRate = gamesWithResult ? (wonGames / gamesWithResult * 100).toFixed(2) : 0;
             const commonTeammates = statsData.aggregations.teammates.filtered_games.by_name.buckets.map(b => ({
                 name: b.key,

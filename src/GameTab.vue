@@ -157,7 +157,7 @@ onMounted(() => {
     <div class="game-details2" v-if="g.guid">
         <fieldset>
             <legend>游戏说明</legend>
-            <div v-html="g.instructions.replace(/\r?\n/g, '<br>')"></div>
+            <div v-html="g.instructions ? g.instructions.replace(/\r?\n/g, '<br>') : ''"></div>
         </fieldset>
         <fieldset>
             <legend>基本信息</legend>

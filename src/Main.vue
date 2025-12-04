@@ -38,7 +38,9 @@ const selectedFilters = reactive({
     gametype: [],
     victorytype: [],
     revealmap: [],
-    civs: []
+    civs: [],
+    filterShortDuration: [true],
+    filterAI: [true]
 });
 provide('selectedFilters', toRefs(selectedFilters));
 </script>

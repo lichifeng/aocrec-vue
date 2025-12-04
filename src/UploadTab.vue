@@ -152,7 +152,7 @@ const loadGame = (e) => {
                     </td>
                     <td>
                         <a href="#" v-if="file.guid" @click.prevent="loadGame" v-bind:guid="file.guid">查看</a>
-                        <span v-html"file.status"></span>
+                        <span v-html="file.status"></span>
                     </td>
                 </tr>
             </tbody>
